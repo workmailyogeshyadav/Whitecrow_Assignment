@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NIST AI RMF Assistant</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <p class="kicker">LangGraph · NIST corpus</p>
+      <h1>AI RMF Assistant</h1>
+      <p class="lede">
+        Ask grounded questions about the NIST AI Risk Management Framework 1.0
+        and the Generative AI Profile. Answers cite document, page, and section.
+      </p>
+
+      <div class="panel">
+        <h2>Try a question</h2>
+        <div class="examples" id="examples"></div>
+      </div>
+
+      <div class="panel muted">
+        <h2>How it works</h2>
+        <ol>
+          <li>Follow-ups are rewritten into a standalone search query.</li>
+          <li>Chroma retrieves the most similar chunks.</li>
+          <li>Weak retrieval is rewritten once, then the system abstains.</li>
+        </ol>
+      </div>
+
+      <button type="button" class="ghost" id="reset">New conversation</button>
+    </aside>
+
+    <main class="stage">
+      <header class="stage-bar">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Connecting…</span>
+      </header>
+
+      <section class="thread" id="thread" aria-live="polite"></section>
+
+      <form class="composer" id="composer">
+        <label class="sr-only" for="question">Question</label>
+        <textarea
+          id="question"
+          name="question"
+          rows="2"
+          required
+          placeholder="Ask about Govern, Map, Measure, Manage, or a follow-up…"
+        ></textarea>
+        <button type="submit" id="send">Ask</button>
+      </form>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

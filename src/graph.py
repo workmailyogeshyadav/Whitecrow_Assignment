@@ -146,20 +146,36 @@ def rewrite_query(state: RAGState) -> dict:
     }
 
 def generate_answer(state: RAGState) -> dict:
+    question = state.get("question", "")
+    standalone = state.get("standalone_question", question)
+    history = state.get("chat_history", [])
+    history_text = "None"
+    if history:
+        history_text = "\n".join(
+            f'{item["role"].upper()}: {item["content"]}' for item in history[-6:]
+        )
+
     prompt = ChatPromptTemplate.from_messages([
         ("system",
          "You are a careful assistant answering questions about the NIST AI RMF. "
          "Answer ONLY from the supplied retrieved context. Do not use outside "
          "knowledge to fill gaps. If evidence is partial, state the limitation. "
+         "Use conversation history only to interpret follow-up questions. "
          "Cite claims inline using [Document, p. X, Section Y]. "
          "Never invent page numbers, sections, or sources. If the context does "
          "not support an answer, say so."),
-        ("human", "Retrieved context:\n{context}\n\nQuestion: {question}\n\n"
-                  "Write a clear, concise answer with citations.")
+        ("human",
+         "Conversation history:\n{history}\n\n"
+         "Retrieved context:\n{context}\n\n"
+         "Latest user question: {question}\n"
+         "Resolved question: {standalone}\n\n"
+         "Write a clear, concise answer with citations.")
     ])
     result = (prompt | llm).invoke({
         "context": state.get("context", ""),
-        "question": state.get("question", ""),
+        "question": question,
+        "standalone": standalone,
+        "history": history_text,
     })
     return {"answer": result.content}
 
